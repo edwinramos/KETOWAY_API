@@ -5,20 +5,25 @@ import { Home } from './components/Home';
 import Main from './components/Main';
 import LogIn from './components/User/LogIn';
 import './custom.css'
-
+import Cookies from 'js-cookie';
 
 export default class App extends Component {
     static displayName = App.name;
     constructor(props) {
         super(props);
+        var isActiveUser = false;
+        var user = Cookies.get('activeUser');
+        if (user)
+            isActiveUser = true;
+
         this.state = {
-            isLogOn: false,
+            isLogOn: isActiveUser, activeUser: []
         };
-        this.onLogIn = this.onLogIn.bind(this);
+
+        this.onLogInSucess = this.onLogInSucess.bind(this);
     }
 
-    onLogIn = (e) => {
-
+    onLogInSucess() {
         this.setState({
             isLogOn: true,
         });
@@ -29,7 +34,7 @@ export default class App extends Component {
             <div>
                 {this.state.isLogOn ?
                     <Main /> :
-                    <LogIn onLogIn={() => { this.onLogIn() }} />
+                    <LogIn onLogInSucess={() => { this.onLogInSucess() }} />
                 }
             </div>
         );

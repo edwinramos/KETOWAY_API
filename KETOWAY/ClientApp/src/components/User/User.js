@@ -68,14 +68,14 @@ export class User extends Component {
     }
 
     async getUsers() {
-        const response = await fetch('api/MobileApi/getUsers');
+        const response = await fetch('api/User/getUsers');
         const data = await response.json();
         this.setState({ users: data, loading: false });
     }
 
     openEditModal(userCode) {
         console.log(userCode);
-        fetch("api/MobileApi/getUser/" + userCode)
+        fetch("api/User/getUser/" + userCode)
             .then(res => res.json())
             .then(
                 (result) => {
@@ -91,7 +91,7 @@ export class User extends Component {
     }
 
     updateData(obj) {
-        var url = 'api/MobileApi/postUser';
+        var url = 'api/User/postUser';
         const requestOptions = {
             method: 'POST',
             headers: {
@@ -110,7 +110,7 @@ export class User extends Component {
                 });
     }
     deleteUser(code) {
-        var url = 'api/MobileApi/deleteUser';
+        var url = 'api/User/deleteUser';
         const requestOptions = {
             method: 'POST',
             headers: {

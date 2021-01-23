@@ -38,7 +38,8 @@ namespace KetoWayApi.DataAccess.DataLayer
                             StateCode = reader["StateCode"].ToString(),
                             ImagePath = reader["ImagePath"].ToString(),
                             Gender = (Gender)Enum.Parse(typeof(Gender), reader["Gender"].ToString(), true),
-                            BirthDate = Convert.ToDateTime(reader["BirthDate"].ToString())
+                            BirthDate = Convert.ToDateTime(reader["BirthDate"].ToString()),
+                            IsAdmin = Convert.ToBoolean(reader["IsAdmin"].ToString())
                         });
                     }
                 }
@@ -68,7 +69,8 @@ namespace KetoWayApi.DataAccess.DataLayer
                             StateCode = reader["StateCode"].ToString(),
                             ImagePath = reader["ImagePath"].ToString(),
                             Gender = (Gender)Enum.Parse(typeof(Gender), reader["Gender"].ToString(), true),
-                            BirthDate = Convert.ToDateTime(reader["BirthDate"].ToString())
+                            BirthDate = Convert.ToDateTime(reader["BirthDate"].ToString()),
+                            IsAdmin = Convert.ToBoolean(reader["IsAdmin"].ToString())
                         };
                     }
                 }
@@ -93,6 +95,7 @@ namespace KetoWayApi.DataAccess.DataLayer
                 using (MySqlConnection conn = GetConnection())
                 {
                     conn.Open();
+                    //var script = $"UPDATE `User` SET `Password` = '{obj.Password}', `Name`= '{obj.Name}', `LastName`= '{obj.LastName}', `Email`= '{obj.Email}', `CountryCode`= '{obj.CountryCode}', `StateCode`= '{obj.StateCode}', `ImagePath`= '{obj.ImagePath}', `BirthDate`='{obj.BirthDate.ToString("yyyyMMdd")}', `IsAdmin`='{Convert.ToInt32(obj.IsAdmin)}' WHERE `UserCode` = '{obj.UserCode}';";
                     var script = $"UPDATE `User` SET `Password` = '{obj.Password}', `Name`= '{obj.Name}', `LastName`= '{obj.LastName}', `Email`= '{obj.Email}', `CountryCode`= '{obj.CountryCode}', `StateCode`= '{obj.StateCode}', `ImagePath`= '{obj.ImagePath}', `BirthDate`='{obj.BirthDate.ToString("yyyyMMdd")}' WHERE `UserCode` = '{obj.UserCode}';";
                     MySqlCommand cmd = new MySqlCommand(script, conn);
 

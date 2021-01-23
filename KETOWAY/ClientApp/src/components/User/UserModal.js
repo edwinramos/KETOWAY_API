@@ -20,7 +20,7 @@ class UserModal extends Component {
     constructor(props) {
         super(props);
 
-        var url = 'api/MobileApi/getFoodGroups';
+        var url = 'api/User/getFoodGroups';
         fetch(url)
             .then(res => res.json())
             .then(
@@ -131,6 +131,11 @@ class UserModal extends Component {
         return e => {
             e.preventDefault();
 
+            const formData = new FormData(e.target);
+            console.log(formData);
+            console.log(formData.entries());
+            var formDataObj = Object.fromEntries(formData.entries());
+            console.log(formDataObj);
             var obj =
             {
                 UserCode: e.currentTarget[0].value,
@@ -147,11 +152,14 @@ class UserModal extends Component {
         }
     }
 
+    onAdminChange(e) {
+
+    }
     onFileChange(code) {
         return e => {
             e.preventDefault();
             var obj = e.target.files[0];
-            var url = 'api/MobileApi/userImage';
+            var url = 'api/User/userImage';
             const requestOptions = {
                 method: 'POST',
                 headers: {

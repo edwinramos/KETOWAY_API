@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KETOWAY", "KETOWAY\KETOWAY.csproj", "{F1C427E8-D1E3-49D6-BEC1-6A8D89C7E5AF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KETOWAY", "KETOWAY\KETOWAY.csproj", "{F1C427E8-D1E3-49D6-BEC1-6A8D89C7E5AF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KETOWAY.DataAccess", "KETOWAY.DataAccess\KETOWAY.DataAccess.csproj", "{C3E3AB67-549B-4316-A3E2-ACEE9F82DAFE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{F1C427E8-D1E3-49D6-BEC1-6A8D89C7E5AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1C427E8-D1E3-49D6-BEC1-6A8D89C7E5AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1C427E8-D1E3-49D6-BEC1-6A8D89C7E5AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3E3AB67-549B-4316-A3E2-ACEE9F82DAFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3E3AB67-549B-4316-A3E2-ACEE9F82DAFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3E3AB67-549B-4316-A3E2-ACEE9F82DAFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3E3AB67-549B-4316-A3E2-ACEE9F82DAFE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
