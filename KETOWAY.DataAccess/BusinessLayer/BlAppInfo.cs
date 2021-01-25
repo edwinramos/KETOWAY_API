@@ -1,4 +1,5 @@
 ﻿using KetoWay.DataAccess.DataEntities;
+using KETOWAY.DataAccess;
 using KetoWayApi.DataAccess.DataLayer;
 using System;
 using System.Collections.Generic;
@@ -9,17 +10,102 @@ namespace KetoWayApi.DataAccess.BusinessLayer
 {
     public static class BlAppInfo
     {
-        public static List<DeAppInfo> GetAll()
+        public static ApiResponse GetAppInfo()
         {
-            return new DlAppInfo().GetAll();
+            var result = new ApiResponse();
+            var dl = new DlAppInfo();
+            try
+            {
+                var list = new List<DeAppInfo>();
+                list.AddRange(dl.GetByCode("about"));
+                list.AddRange(dl.GetByCode("reference"));
+
+                result = new ApiResponse() { Success = true, Body = list };
+            }
+            catch (Exception ex)
+            {
+                result = new ApiResponse() { Success = false, Body = null, Message = ex.Message };
+            }
+
+            return result;
         }
-        public static List<DeAppInfo> GetByCode(string code)
+        public static ApiResponse GetData(string code)
         {
-            return new DlAppInfo().GetByCode(code);
+            var result = new ApiResponse();
+            var dl = new DlAppInfo();
+            try
+            {
+                var list = new List<DeAppInfo>();
+                list.AddRange(dl.GetByCode("about"));
+                list.AddRange(dl.GetByCode("reference"));
+
+                result = new ApiResponse() { Success = true, Body = list };
+            }
+            catch (Exception ex)
+            {
+                result = new ApiResponse() { Success = false, Body = null, Message = ex.Message };
+            }
+            return result;
         }
-        public static DeAppInfo Save(DeAppInfo obj)
+        public static ApiResponse Save(DeAppInfo model)
         {
-            return new DlAppInfo().Save(obj);
+            var result = new ApiResponse();
+            var dl = new DlAppInfo();
+            try
+            {
+                var obj = dl.GetByCode(model.InfoCode).FirstOrDefault(x => x.LangCode == model.LangCode);
+                if (obj != null)
+                {
+                    model.UpdateDateTime = DateTime.Now;
+                    if (obj.InfoContent != model.InfoContent)
+                    {
+                        obj.InfoContent = model.InfoContent;
+                        obj.UpdateDateTime = model.UpdateDateTime;
+                    }
+                    obj = dl.Save(obj);
+
+                    result = new ApiResponse() { Success = true, Body = obj };
+                }
+                else
+                    result = new ApiResponse() { Success = false, Body = null, Message = "Not valid Info" };
+            }
+            catch (Exception ex)
+            {
+                result = new ApiResponse() { Success = false, Body = null, Message = ex.Message };
+            }
+            return result;
         }
+        public static ApiResponse GetInfoByCode(string code)
+        {
+            var result = new ApiResponse();
+            var dl = new DlAppInfo();
+            try
+            {
+                var languages = BlAppLanguage.GetAll();
+                var list = new List<DeAppInfo>();
+                foreach (var item in languages)
+                {
+                    var obj = dl.GetAll().FirstOrDefault(x => x.InfoCode == code && x.LangCode == item.LangCode);
+                    if (obj != null)
+                        list.Add(obj);
+                    else
+                        list.Add(new DeAppInfo { InfoCode = code, InfoContent = "", LangCode = item.LangCode });
+                }
+                result = new ApiResponse() { Success = true, Body = list };
+            }
+            catch (Exception ex)
+            {
+                result = new ApiResponse() { Success = false, Body = null, Message = ex.Message };
+            }
+            return result;
+        }
+        //public static List<DeAppInfo> GetByCode(string code)
+        //{
+        //    return new DlAppInfo().GetByCode(code);
+        //}
+        //public static DeAppInfo Save(DeAppInfo obj)
+        //{
+        //    return new DlAppInfo().Save(obj);
+        //}
     }
 }

@@ -1,14 +1,12 @@
-import React, { Component } from "react";
-import Alert from 'react-bootstrap/Alert';
-import Cookies from 'js-cookie';
+﻿import React, { Component } from "react";
+import { showToast, setCookie, toastType, PostData } from "../Helper";
 
 export default class LogIn extends Component {
     state = {
-        userCode: "", password: "", showAlert: false, errorMessage: ""
+        userCode: "", password: ""
     };
     constructor(props) {
         super(props);
-        this.setShow = this.setShow.bind(this);
         this.onChange = this.onChange.bind(this);
         this.onLoginHandler = this.onLoginHandler.bind(this);
     }
@@ -16,15 +14,6 @@ export default class LogIn extends Component {
         const { onLogInSucess } = this.props
         return (
             <div>
-                <Alert variant="danger" show={this.state.showAlert} onClose={() => this.setShow(false)} dismissible style={{
-                    position: 'absolute', left: '50%', top: '50%',
-                    transform: 'translate(-50%, -270%)', width: "500px"
-                }}>
-                    <Alert.Heading>Error!</Alert.Heading>
-                    <p>
-                        {this.state.errorMessage}
-                    </p>
-                </Alert>
                 <form onSubmit={(e) => { e.preventDefault(); this.onLoginHandler(onLogInSucess); }} style={{
                     position: 'absolute', left: '50%', top: '50%',
                     transform: 'translate(-50%, -50%)', width: "500px"
@@ -37,7 +26,7 @@ export default class LogIn extends Component {
                     </div>
 
                     <div className="form-group">
-                        <label>Contrase�a</label>
+                        <label>Contraseña</label>
                         <input type="password" name="password" className="form-control" placeholder="Enter password" onChange={this.onChange} />
                     </div>
 
@@ -56,34 +45,17 @@ export default class LogIn extends Component {
             </div>
         );
     }
-    setShow(flag, msg) {
-        this.setState({ showAlert: flag, errorMessage: msg });
-    }
 
-    onLoginHandler(onLogInSucess) {
-        const that = this;
+    async onLoginHandler(onLogInSucess) {
         var url = 'api/User/userLogIn';
-        const requestOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({ "userCode": this.state.userCode, "password": this.state.password })
-        };
-        fetch(url, requestOptions)
-            .then(function (response) {
-                //console.log(response)
-                return response.json();
-            })
-            .then(function (myJson) {
-                if (myJson.success) {
-                    Cookies.set('activeUser', that.state.userCode, { expires: 1 });
-                    onLogInSucess();
-                }
-                else
-                    that.setShow(true, myJson.message);
-            });
+        var body = { "userCode": this.state.userCode, "password": this.state.password };
+        var apiRequest = { body: body }
+        var result = await PostData(url, apiRequest);
+        if (result) {
+            setCookie('activeUser', this.state.userCode);
+            showToast("Welcome " + result.name + "!", toastType.SUCCESS)
+            onLogInSucess();
+        }
     }
     onChange(event) {
         let nam = event.target.name;

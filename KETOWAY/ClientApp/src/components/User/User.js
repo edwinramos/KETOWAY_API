@@ -4,6 +4,7 @@ import Icon from "@material-ui/core/Icon";
 import Button from 'react-bootstrap/Button';
 import BootstrapTable from 'react-bootstrap/Table'
 import EditModal from './UserModal';
+import { showToast, toastType, PostData, GetData, DeleteData } from "../Helper";
 
 export class User extends Component {
     static displayName = User.name;
@@ -68,64 +69,32 @@ export class User extends Component {
     }
 
     async getUsers() {
-        const response = await fetch('api/User/getUsers');
-        const data = await response.json();
+        var data = await GetData("api/User");
         this.setState({ users: data, loading: false });
     }
 
-    openEditModal(userCode) {
-        console.log(userCode);
-        fetch("api/User/getUser/" + userCode)
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    this.setState({ objectToEdit: result, objectEditing: true });
-                },
-                (error) => {
-                    console.log(error);
-                }
-            );
+    async openEditModal(userCode) {
+        var result = await GetData("api/User/getUser/" + userCode);
+        if (result)
+            this.setState({ objectToEdit: result, objectEditing: true });
     }
     closeEditModal() {
         this.setState({ objectEditing: false })
     }
 
-    updateData(obj) {
+    async updateData(obj) {
         var url = 'api/User/postUser';
-        const requestOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(obj)
-        };
-        fetch(url, requestOptions)
-            .then(
-                (result) => {
-                    this.getUsers();
-                    this.setState({ objectToEdit: {}, objectEditing: false });
-                },
-                (error) => {
-                    console.log(error);
-                });
+        var apiRequest = { Body: obj };
+        var result = await PostData(url, apiRequest);
+        if (result) {
+            this.getUsers();
+            this.setState({ objectToEdit: {}, objectEditing: false });
+        }
     }
-    deleteUser(code) {
-        var url = 'api/User/deleteUser';
-        const requestOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(code)
-        };
-        fetch(url, requestOptions)
-            .then(
-                (result) => {
-                    this.getUsers();
-                },
-                (error) => {
-                    console.log(error);
-                });
+
+    async deleteUser(code) {
+        await DeleteData("api/User/" + code,);
+        this.getUsers();
     }
 
 }

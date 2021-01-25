@@ -26,60 +26,6 @@ namespace KETOWAY.Controllers
             return new string[] { "value1", "value2" };
         }
 
-        #region AppInfo
-
-        [HttpGet]
-        [Route("appInfo")]
-        public JsonResult GetAppInfo()
-        {
-            var result = new List<DeAppInfo>();
-            result.AddRange(BlAppInfo.GetByCode("about"));
-            result.AddRange(BlAppInfo.GetByCode("reference"));
-
-            return Json(result);
-        }
-
-        // POST api/<controller>
-        [HttpPost("postInfo")]
-        public async Task<IActionResult> Post([FromBody] DeAppInfo obj)
-        {
-            obj.UpdateDateTime = DateTime.Now;
-
-            try
-            {
-                var dbObj = BlAppInfo.GetByCode(obj.InfoCode).FirstOrDefault(x => x.LangCode == obj.LangCode);
-                if (dbObj != null && dbObj.InfoContent != obj.InfoContent)
-                    obj.UpdateDateTime = dbObj.UpdateDateTime;
-
-                obj = BlAppInfo.Save(obj);
-                return Ok("Success");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpGet]
-        [Route("getInfo/{id}")]
-        public JsonResult GetInfo(string id)
-        {
-            var languages = BlAppLanguage.GetAll();
-            var result = new List<DeAppInfo>();
-            //BlNew.GetAll().Where(x => x.NewCode == id)
-            foreach (var item in languages)
-            {
-                var obj = BlAppInfo.GetAll().FirstOrDefault(x => x.InfoCode == id && x.LangCode == item.LangCode);
-                if (obj != null)
-                    result.Add(obj);
-                else
-                    result.Add(new DeAppInfo { InfoCode = id, InfoContent = "", LangCode = item.LangCode });
-            }
-
-            return Json(result);
-        }
-        #endregion
-
         #region Recipes
 
         [HttpGet]

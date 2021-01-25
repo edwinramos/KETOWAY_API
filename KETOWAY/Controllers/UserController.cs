@@ -17,89 +17,47 @@ using Newtonsoft.Json;
 namespace KETOWAY.Controllers
 {
     [Route("api/[controller]")]
-    //[Route("api")]
     public class UserController : Controller
     {
         #region LogIn
         [HttpPost("userLogIn")]
-        public ApiResponse UserLogIn([FromBody] DeUser user)
+        public ApiResponse UserLogIn([FromBody] ApiRequest model)
         {
+            var user = JsonConvert.DeserializeObject<DeUser>(model.Body.ToString());
             var result = BlUser.IsValidUser(user.UserCode, user.Password);
-
-            //if (result.Success)
-            //{
-            //    CookieHelper.CreateCookie(Request, Response, "activeUser", user.UserCode, DateTime.Now.AddMinutes(3));
-            //    //string activeUser = Request.Cookies["activeUser"];
-
-            //    //if (string.IsNullOrEmpty(activeUser))
-            //    //{
-            //    //    CookieOptions option = new CookieOptions();
-
-            //    //    option.Expires = 
-
-            //    //    Response.Cookies.Append("activeUser", ((DeUser)result.Body).UserCode, option);
-            //    //}
-            //}
             return result;
         }
         #endregion
 
         #region User
         [HttpGet]
-        [Route("getUsers")]
-        public JsonResult GetAllUsers()
+        public ApiResponse GetAllUsers()
         {
             var result = BlUser.GetAll();
-
-            return Json(result);
+            return result;
         }
 
         [Route("getUser/{userCode}")]
-        public JsonResult GetUser(string userCode)
+        public ApiResponse GetUser(string userCode)
         {
-            var obj = BlUser.GetAll().FirstOrDefault(x => x.UserCode == userCode);
-            if (obj == null)
-                obj = new DeUser
-                {
-                    UserCode = "",
-                    Name = "",
-                    LastName = "",
-                    Email = "",
-                    Password = "",
-                    ImagePath = "",
-                    BirthDate = DateTime.Today
-                };
-
-            return Json(obj);
+            var obj = BlUser.GetByCode(userCode);
+            return obj;
         }
 
         [HttpPost("postUser")]
-        public async Task<IActionResult> PostUser([FromBody] object model)
+        public async Task<ApiResponse> PostUser([FromBody] ApiRequest model)
         {
-            try
-            {
-                var obj = JsonConvert.DeserializeObject<DeUser>(model.ToString());
-                BlUser.Save(obj);
-                return Ok("Success");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var obj = JsonConvert.DeserializeObject<DeUser>(model.Body.ToString());
+            var result = BlUser.Save(obj);
+
+            return result;
         }
 
-        [HttpPost("deleteUser")]
-        public async Task<IActionResult> DeleteUser([FromBody] string userCode)
+        [HttpDelete("{userCode}")]
+        public ApiResponse DeleteUser(string userCode)
         {
-            try
-            {
-                BlUser.Delete(userCode);
-                return Ok("Success");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest("");
-            }
+            var result = BlUser.Delete(userCode);
+            return result;
         }
 
         [HttpPost("userImage")]

@@ -4,7 +4,7 @@ import JoditEditor from "jodit-react";
 import Accordion from 'react-bootstrap/Accordion'
 import Icon from "@material-ui/core/Icon";
 import Button from 'react-bootstrap/Button';
-
+import { showToast, toastType, PostData, GetData } from "../Helper";
 
 var aboutInfoSend = [];
 var referenceInfoSend = [];
@@ -16,30 +16,28 @@ class AppInfo extends Component {
 
     constructor() {
         super();
-        fetch("api/MobileApi/appInfo")
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    //var languages = getLanguages();
+        this.GetDatas();
 
-                    var arr = [];
-                    var refs = [];
-                    for (var i = 0; i < result.length; i++) {
-                        if (result[i].infoCode === 'about')
-                            arr.push(result[i]);
-
-                        if (result[i].infoCode === 'reference')
-                            refs.push(result[i]);
-                    }
-                    aboutInfoSend = arr;
-                    this.setState({ aboutInfo: arr, referenceInfo: refs });
-                },
-                (error) => { console.log(error); }
-            );
         this.updateAboutInfo = this.updateAboutInfo.bind(this)
         this.updateReferenceInfo = this.updateReferenceInfo.bind(this)
         this.postAboutInfo = this.postAboutInfo.bind(this)
         this.postReferenceInfo = this.postReferenceInfo.bind(this)
+    }
+
+    async GetDatas() {
+        var result = await GetData("api/AppInfo");
+        var arr = [];
+        var refs = [];
+        for (var i = 0; i < result.length; i++) {
+            if (result[i].infoCode === 'about')
+                arr.push(result[i]);
+
+            if (result[i].infoCode === 'reference')
+                refs.push(result[i]);
+
+            aboutInfoSend = arr;
+            this.setState({ aboutInfo: arr, referenceInfo: refs });
+        }
     }
 
     render() {
@@ -97,52 +95,26 @@ class AppInfo extends Component {
         </div>
         );
     }
-    postAboutInfo() {
+    async postAboutInfo() {
         this.setState({
             aboutInfo: aboutInfoSend
         });
         var arr = this.state.aboutInfo;
         for (var i in arr) {
-            var url = 'api/MobileApi/postInfo';
-            const requestOptions = {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(arr[i])
-            };
-            fetch(url, requestOptions)
-                .then(
-                    (result) => {
-                        console.log(result);
-                    },
-                    (error) => {
-                        console.log(error);
-                    });
+            var url = 'api/AppInfo';
+            var apiRequest = { body: arr[i] };
+            await PostData(url, apiRequest);
         }
     }
-    postReferenceInfo() {
+    async postReferenceInfo() {
         this.setState({
             referenceInfo: referenceInfoSend
         });
         var arr = this.state.referenceInfo;
         for (var i in arr) {
-            var url = 'api/MobileApi/postInfo';
-            const requestOptions = {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(arr[i])
-            };
-            fetch(url, requestOptions)
-                .then(
-                    (result) => {
-                        console.log(result);
-                    },
-                    (error) => {
-                        console.log(error);
-                    });
+            var url = 'api/AppInfo';
+            var apiRequest = { body: arr[i] };
+            await PostData(url, apiRequest);
         }
     }
 

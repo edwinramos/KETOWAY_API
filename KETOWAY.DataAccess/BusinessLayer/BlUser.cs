@@ -10,9 +10,19 @@ namespace KetoWayApi.DataAccess.BusinessLayer
 {
     public static class BlUser
     {
-        public static List<DeUser> GetAll()
+        public static ApiResponse GetAll()
         {
-            return new DlUser().GetAll();
+            var result = new ApiResponse();
+            try
+            {
+                var users = new DlUser().GetAll();
+                result = new ApiResponse(true, "", users);
+            }
+            catch (Exception ex)
+            {
+                result = new ApiResponse(false, ex.Message, null);
+            }
+            return result;
         }
         public static ApiResponse IsValidUser(string code, string password)
         {
@@ -23,7 +33,7 @@ namespace KetoWayApi.DataAccess.BusinessLayer
                 if (usr != null && usr.Password == password)
                     result = new ApiResponse(true, "", usr);
                 else
-                    result = new ApiResponse(false, "Invalid User", null);
+                    result = new ApiResponse(false, "😥 Invalid User", null);
             }
             catch (Exception ex)
             {
@@ -31,17 +41,63 @@ namespace KetoWayApi.DataAccess.BusinessLayer
             }
             return result;
         }
-        public static DeUser GetByCode(string code)
+        public static ApiResponse GetByCode(string code)
         {
-            return new DlUser().GetByCode(code);
+            var result = new ApiResponse();
+            try
+            {
+                var usr = new DlUser().GetByCode(code);
+                if (usr != null)
+                    result = new ApiResponse(true, "", usr);
+                else
+                {
+                    usr = new DeUser
+                    {
+                        UserCode = "",
+                        Name = "",
+                        LastName = "",
+                        Email = "",
+                        Password = "",
+                        ImagePath = "",
+                        BirthDate = DateTime.Today
+                    };
+                }
+                result = new ApiResponse(true, "New User", usr);
+            }
+            catch (Exception ex)
+            {
+                result = new ApiResponse(false, ex.Message, null);
+            }
+            return result;
         }
-        public static DeUser Save(DeUser obj)
+        public static ApiResponse Save(DeUser obj)
         {
-            return new DlUser().Save(obj);
+            var result = new ApiResponse();
+            try
+            {
+                new DlUser().Save(obj);
+                result = new ApiResponse(true, "", obj);
+            }
+            catch (Exception ex)
+            {
+                result = new ApiResponse(false, ex.Message, null);
+            }
+            return result;
         }
-        public static void Delete(string code)
+        public static ApiResponse Delete(string code)
         {
-            new DlUser().Delete(code);
+            var result = new ApiResponse();
+            try
+            {
+                new DlUser().Delete(code);
+                result = new ApiResponse(true, "", null);
+            }
+            catch (Exception ex)
+            {
+                result = new ApiResponse(false, ex.Message, "Error Deleting");
+            }
+
+            return result;
         }
     }
 }
