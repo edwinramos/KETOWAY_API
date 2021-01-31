@@ -16,27 +16,34 @@ using Newtonsoft.Json;
 namespace KETOWAY.Controllers
 {
     [Route("api/[controller]")]
-    public class AppInfoController : Controller
+    public class RecipeController : Controller
     {
         [HttpGet]
-        public ApiResponse GetAppInfo()
+        public ApiResponse GetAllRecipes()
         {
-            var result = BlAppInfo.GetAppInfo();
+            var result = BlRecipe.GetAll();
+            return result;
+        }
+
+        [HttpGet("{id}")]
+        public ApiResponse GetRecipes(string id)
+        {
+            var result = BlRecipe.GetRecipeAllLanguages(id);
             return result;
         }
 
         [HttpPost]
-        public async Task<ApiResponse> Post([FromBody] ApiRequest model)
+        public async Task<ApiResponse> PostRecipe([FromBody] ApiRequest model)
         {
-            var obj = JsonConvert.DeserializeObject<DeAppInfo>(model.Payload.ToString());
-            var result = BlAppInfo.Save(obj);
+            var obj = JsonConvert.DeserializeObject<List<DeRecipe>>(model.Payload.ToString());
+            var result = BlRecipe.Save(obj);
             return result;
         }
 
-        [HttpGet("getInfo/{id}")]
-        public ApiResponse GetInfo(string id)
+        [HttpDelete("{code}")]
+        public async Task<ApiResponse> DeleteRecipe(string code)
         {
-            var result = BlAppInfo.GetInfoByCode(id);
+            var result = BlRecipe.Delete(code);
             return result;
         }
     }

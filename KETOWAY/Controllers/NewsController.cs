@@ -16,27 +16,35 @@ using Newtonsoft.Json;
 namespace KETOWAY.Controllers
 {
     [Route("api/[controller]")]
-    public class AppInfoController : Controller
+    //[Route("api")]
+    public class NewsController : Controller
     {
         [HttpGet]
-        public ApiResponse GetAppInfo()
+        public ApiResponse GetAllNews()
         {
-            var result = BlAppInfo.GetAppInfo();
+            var result = BlNews.GetAll();
+            return result;
+        }
+
+        [HttpGet("{id}")]
+        public ApiResponse GetNews(string id)
+        {
+            var result = BlNews.GetByCode(id);
             return result;
         }
 
         [HttpPost]
-        public async Task<ApiResponse> Post([FromBody] ApiRequest model)
+        public async Task<ApiResponse> PostNews([FromBody] ApiRequest model)
         {
-            var obj = JsonConvert.DeserializeObject<DeAppInfo>(model.Payload.ToString());
-            var result = BlAppInfo.Save(obj);
+            var obj = JsonConvert.DeserializeObject<List<DeNews>>(model.Payload.ToString());
+            var result = BlNews.Save(obj);
             return result;
         }
 
-        [HttpGet("getInfo/{id}")]
-        public ApiResponse GetInfo(string id)
+        [HttpDelete("{code}")]
+        public async Task<ApiResponse> DeleteNews(string code)
         {
-            var result = BlAppInfo.GetInfoByCode(id);
+            var result = BlNews.Delete(code);
             return result;
         }
     }

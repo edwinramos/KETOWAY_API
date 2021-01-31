@@ -1,14 +1,16 @@
 ﻿import React, { Component } from "react";
 import { showToast, setCookie, toastType, PostData } from "../Helper";
+import ForgotPasswordModal from './ForgotPasswordModal';
 
 export default class LogIn extends Component {
     state = {
-        userCode: "", password: ""
+        userCode: "", password: "", hasForgotPassword: false
     };
     constructor(props) {
         super(props);
         this.onChange = this.onChange.bind(this);
         this.onLoginHandler = this.onLoginHandler.bind(this);
+        this.closeEditModal = this.closeEditModal.bind(this);
     }
     render() {
         const { onLogInSucess } = this.props
@@ -39,9 +41,10 @@ export default class LogIn extends Component {
 
                     <button type="submit" className="btn btn-primary btn-block">Log In</button>
                     <p className="forgot-password text-right">
-                        Forgot <a href="#">password?</a>
+                        <a onClick={() => this.setState({ hasForgotPassword: true })}>Forgot password?</a>
                     </p>
                 </form>
+                <ForgotPasswordModal onClose={this.closeEditModal} isOpen={this.state.hasForgotPassword} />
             </div>
         );
     }
@@ -49,7 +52,7 @@ export default class LogIn extends Component {
     async onLoginHandler(onLogInSucess) {
         var url = 'api/User/userLogIn';
         var body = { "userCode": this.state.userCode, "password": this.state.password };
-        var apiRequest = { body: body }
+        var apiRequest = { payload: body }
         var result = await PostData(url, apiRequest);
         if (result) {
             setCookie('activeUser', this.state.userCode);
@@ -61,5 +64,8 @@ export default class LogIn extends Component {
         let nam = event.target.name;
         let val = event.target.value;
         this.setState({ [nam]: val });
+    }
+    closeEditModal() {
+        this.setState({ hasForgotPassword: false })
     }
 }

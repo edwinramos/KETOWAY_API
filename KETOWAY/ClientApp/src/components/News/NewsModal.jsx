@@ -27,7 +27,7 @@ class NewsModal extends Component {
         return (
             <Container>
                 <Modal
-                    size="lg"
+                    size="xl"
                     show={isOpen}
                     onHide={() => onClose()}
                     aria-labelledby="example-modal-sizes-title-lg">

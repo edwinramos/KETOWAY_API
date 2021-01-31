@@ -7,14 +7,14 @@ namespace KETOWAY.DataAccess
         public ApiResponse()
         {
         }
-        public ApiResponse(bool success, string message, object body)
+        public ApiResponse(bool success, string message, object payload)
         {
             Success = success;
             Message = message;
-            Body = body;
+            Payload = payload;
         }
         public bool Success { get; set; }
         public string Message { get; set; }
-        public object Body { get; set; }
+        public object Payload { get; set; }
     }
 }

@@ -1,28 +1,27 @@
 import React, { Component } from 'react';
-// core components
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Icon from "@material-ui/core/Icon";
 import BootstrapTable from 'react-bootstrap/Table'
 import EditModal from './RecipeModal';
+import { showToast, toastType, PostData, GetData, DeleteData } from "../Helper";
 
 class Recipes extends Component {
-    state = { classes:{cardCategoryWhite: "makeStyles-cardCategoryWhite-250", cardTitleWhite: "makeStyles-cardTitleWhite-251"},
-            recipes: [], recipeEditing: false, recipesToEdit:[], recipesToPost:[]};
+    state = {
+        classes: { cardCategoryWhite: "makeStyles-cardCategoryWhite-250", cardTitleWhite: "makeStyles-cardTitleWhite-251" },
+        recipes: [], recipeEditing: false, recipesToEdit: [], recipesToPost: []
+    };
 
-     constructor() {
+    constructor() {
         super();
         this.getRecipes();
-        
+
         this.closeEditModal = this.closeEditModal.bind(this);
         this.onRecipeChange = this.onRecipeChange.bind(this);
         this.updateData = this.updateData.bind(this);
         this.deleteRecipe = this.deleteRecipe.bind(this);
         this.getRecipes = this.getRecipes.bind(this);
-      }
+    }
 
     render() {
         return (
@@ -65,82 +64,51 @@ class Recipes extends Component {
                 </Card>
                 <EditModal onUpdate={this.updateData} onClose={this.closeEditModal} isOpen={this.state.recipeEditing} dataList={this.state.recipesToEdit} />
             </div>
-            );
-    }
-    getRecipes(){
-        fetch("api/MobileApi/getRecipes")
-        .then(res => res.json())
-        .then(
-            (result) => {
-            //   var arr = Object.keys(result).map(function(key) {
-            //     return [result[key].recipeCode,result[key].recipeTitle,<div><Button onClick={()=> openEditModal()} color="info"><Icon>edit</Icon> Editar</Button><Button color="danger"><Icon>delete</Icon> Eliminar</Button></div>];
-            //   });
-              this.setState({ recipes : result});
-            },
-            (error) => {
-                console.log(error);
-            }
         );
     }
-    
+    async getRecipes() {
+        var url = "api/Recipe";
+        var result = await GetData(url);
+        if (result)
+            this.setState({ recipes: result });
+    }
+
     onRecipeChange(arr) {
         console.log(arr);
-        
-        this.setState({recipesToPost:arr});
+
+        this.setState({ recipesToPost: arr });
         console.log(this.state.recipesToPost);
     }
-    openEditModal(recipeCode) {
-        fetch("api/MobileApi/getRecipe/"+recipeCode)
-        .then(res => res.json())
-        .then(
-            (result) => {
-              this.setState({ recipesToEdit : result, recipeEditing:true});
-            },
-            (error) => {
-                console.log(error);
-            }
-        );
+
+    async openEditModal(recipeCode) {
+        var url = "api/Recipe/" + recipeCode;
+        var result = await GetData(url);
+        if (result) {
+            this.setState({ recipesToEdit: result, recipeEditing: true });
+        }
     }
+
     closeEditModal() {
-        this.setState({recipeEditing:false})
+        this.setState({ recipeEditing: false })
     }
-    updateData(arr){
+    async updateData(arr) {
         console.log(arr);
-        var url = 'api/MobileApi/postRecipe';
-        const requestOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-              },
-            body: JSON.stringify(arr)
-            };
-        fetch(url, requestOptions)
-            .then(
-                (result) => {
-                    this.getRecipes();
-                    this.setState({recipesToPost:[], recipeEditing:false});
-                },
-                (error) => {
-                    console.log(error);
-                });
+        var url = 'api/Recipe';
+        var apiRequest = { payload: arr };
+        var result = await PostData(url, apiRequest);
+
+        if (result) {
+            this.getRecipes();
+            this.setState({ recipesToPost: [], recipeEditing: false });
         }
-        deleteRecipe(code){
-            var url = 'api/MobileApi/deleteRecipe';
-        const requestOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-              },
-            body: JSON.stringify(code)
-            };
-        fetch(url, requestOptions)
-            .then(
-                (result) => {
-                    this.getRecipes();
-                },
-                (error) => {
-                    console.log(error);
-                });
+    }
+
+    async deleteRecipe(code) {
+        var url = 'api/Recipe/'+code;
+        var result = await DeleteData(url);
+        if (result) {
+            this.getRecipes();
         }
+    }
 }
 export default Recipes;

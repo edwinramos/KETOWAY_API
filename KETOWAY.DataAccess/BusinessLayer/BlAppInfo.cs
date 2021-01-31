@@ -20,11 +20,11 @@ namespace KetoWayApi.DataAccess.BusinessLayer
                 list.AddRange(dl.GetByCode("about"));
                 list.AddRange(dl.GetByCode("reference"));
 
-                result = new ApiResponse() { Success = true, Body = list };
+                result = new ApiResponse() { Success = true, Payload = list };
             }
             catch (Exception ex)
             {
-                result = new ApiResponse() { Success = false, Body = null, Message = ex.Message };
+                result = new ApiResponse() { Success = false, Payload = null, Message = ex.Message };
             }
 
             return result;
@@ -39,11 +39,11 @@ namespace KetoWayApi.DataAccess.BusinessLayer
                 list.AddRange(dl.GetByCode("about"));
                 list.AddRange(dl.GetByCode("reference"));
 
-                result = new ApiResponse() { Success = true, Body = list };
+                result = new ApiResponse() { Success = true, Payload = list };
             }
             catch (Exception ex)
             {
-                result = new ApiResponse() { Success = false, Body = null, Message = ex.Message };
+                result = new ApiResponse() { Success = false, Payload = null, Message = ex.Message };
             }
             return result;
         }
@@ -64,14 +64,14 @@ namespace KetoWayApi.DataAccess.BusinessLayer
                     }
                     obj = dl.Save(obj);
 
-                    result = new ApiResponse() { Success = true, Body = obj };
+                    result = new ApiResponse() { Success = true, Payload = obj };
                 }
                 else
-                    result = new ApiResponse() { Success = false, Body = null, Message = "Not valid Info" };
+                    result = new ApiResponse() { Success = false, Payload = null, Message = "Not valid Info" };
             }
             catch (Exception ex)
             {
-                result = new ApiResponse() { Success = false, Body = null, Message = ex.Message };
+                result = new ApiResponse() { Success = false, Payload = null, Message = ex.Message };
             }
             return result;
         }
@@ -91,11 +91,11 @@ namespace KetoWayApi.DataAccess.BusinessLayer
                     else
                         list.Add(new DeAppInfo { InfoCode = code, InfoContent = "", LangCode = item.LangCode });
                 }
-                result = new ApiResponse() { Success = true, Body = list };
+                result = new ApiResponse() { Success = true, Payload = list };
             }
             catch (Exception ex)
             {
-                result = new ApiResponse() { Success = false, Body = null, Message = ex.Message };
+                result = new ApiResponse() { Success = false, Payload = null, Message = ex.Message };
             }
             return result;
         }

@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Icon from "@material-ui/core/Icon";
 import BootstrapTable from 'react-bootstrap/Table'
 import EditModal from './FoodModal';
+import { PostData, GetData, DeleteData } from "../Helper";
 
 export class ForbiddenFood extends Component {
     static displayName = ForbiddenFood.name;
@@ -66,71 +64,38 @@ export class ForbiddenFood extends Component {
             </div>
         );
     }
-    updateData(arr) {
-        var url = 'api/MobileApi/postFood';
-        const requestOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(arr)
-        };
-        fetch(url, requestOptions)
-            .then(
-                (result) => {
-                    this.getRecipes(false);
-                    this.setState({ recipesToPost: [], recipeEditing: false });
-                },
-                (error) => {
-                    console.log(error);
-                });
+    async updateData(arr) {
+        var url = 'api/Food';
+        var apiRequest = { payload: arr };
+        var result = await PostData(url, apiRequest);
+
+        if (result) {
+            this.getRecipes(false);
+            this.setState({ recipesToPost: [], recipeEditing: false });
+        }
     }
 
-    deleteRecipe(code) {
-        var url = 'api/MobileApi/deleteFood';
-        const requestOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(code)
-        };
-        fetch(url, requestOptions)
-            .then(
-                (result) => {
-                    this.getRecipes(false);
-                },
-                (error) => {
-                    console.log(error);
-                });
+    async deleteRecipe(code) {
+        var url = 'api/Food/' + code;
+        var result = await DeleteData(url);
+        if (result) {
+            this.getRecipes(false);
+        }
     }
 
-    getRecipes(isAllowed) {
-        fetch("api/MobileApi/getFoods/" + isAllowed)
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    //   var arr = Object.keys(result).map(function(key) {
-                    //     return [result[key].recipeCode,result[key].recipeTitle,<div><Button onClick={()=> openEditModal()} color="info"><Icon>edit</Icon> Editar</Button><Button color="danger"><Icon>delete</Icon> Eliminar</Button></div>];
-                    //   });
-                    this.setState({ recipes: result });
-                },
-                (error) => {
-                    console.log(error);
-                }
-            );
+    async getRecipes(isAllowed) {
+        var url = "api/Food/getFoods/" + isAllowed;
+        var result = await GetData(url);
+        if (result) {
+            this.setState({ recipes: result });
+        }
     }
-    openEditModal(foodCode) {
-        fetch("api/MobileApi/getFood/" + foodCode)
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    this.setState({ recipesToEdit: result, recipeEditing: true });
-                },
-                (error) => {
-                    console.log(error);
-                }
-            );
+    async openEditModal(foodCode) {
+        var url = "api/Food/" + foodCode;
+        var result = await GetData(url);
+        if (result) {
+            this.setState({ recipesToEdit: result, recipeEditing: true });
+        }
     }
     closeEditModal() {
         this.setState({ recipeEditing: false })

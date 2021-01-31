@@ -4,6 +4,7 @@ import Button from 'react-bootstrap/Button';
 import Icon from "@material-ui/core/Icon";
 import BootstrapTable from 'react-bootstrap/Table'
 import EditModal from './NewsModal';
+import { PostData, GetData, DeleteData } from "../Helper";
 
 class News extends Component {
     state = {
@@ -67,80 +68,44 @@ class News extends Component {
             </div>
         );
     }
-    getRecipes() {
-        fetch("api/MobileApi/getAllNews")
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    //   var arr = Object.keys(result).map(function(key) {
-                    //     return [result[key].recipeCode,result[key].recipeTitle,<div><Button onClick={()=> openEditModal()} color="info"><Icon>edit</Icon> Editar</Button><Button color="danger"><Icon>delete</Icon> Eliminar</Button></div>];
-                    //   });
-                    this.setState({ recipes: result });
-                },
-                (error) => {
-                    console.log(error);
-                }
-            );
+    async getRecipes() {
+        var url = "api/News";
+        var result = await GetData(url);
+        if (result) {
+            this.setState({ recipes: result });
+        }
     }
 
     onRecipeChange(arr) {
-        console.log(arr);
-
         this.setState({ recipesToPost: arr });
         console.log(this.state.recipesToPost);
     }
-    openEditModal(code) {
-        fetch("api/MobileApi/getNews/" + code)
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    this.setState({ recipesToEdit: result, recipeEditing: true });
-                },
-                (error) => {
-                    console.log(error);
-                }
-            );
+    async openEditModal(code) {
+        var url = "api/News/" + code;
+        var result = await GetData(url);
+        if (result) {
+            this.setState({ recipesToEdit: result, recipeEditing: true });
+        }
     }
     closeEditModal() {
         this.setState({ recipeEditing: false })
     }
-    updateData(arr) {
+    async updateData(arr) {
         console.log(arr);
-        var url = 'api/MobileApi/postNews';
-        const requestOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(arr)
-        };
-        fetch(url, requestOptions)
-            .then(
-                (result) => {
-                    this.getRecipes();
-                    this.setState({ recipesToPost: [], recipeEditing: false });
-                },
-                (error) => {
-                    console.log(error);
-                });
+        var url = 'api/News';
+        var apiRequest = { payload: arr };
+        var result = await PostData(url, apiRequest);
+        if (result) {
+            this.getRecipes();
+            this.setState({ recipesToPost: [], recipeEditing: false });
+        }
     }
-    deleteRecipe(code) {
-        var url = 'api/MobileApi/deleteNews';
-        const requestOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(code)
-        };
-        fetch(url, requestOptions)
-            .then(
-                (result) => {
-                    this.getRecipes();
-                },
-                (error) => {
-                    console.log(error);
-                });
+    async deleteRecipe(code) {
+        var url = 'api/News' + code;
+        var result = await DeleteData(url);
+        if (result) {
+            this.getRecipes();
+        }
     }
 }
 export default News;

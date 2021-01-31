@@ -23,7 +23,7 @@ export const PostData = async (url, body) => {
             .then(res => res.json())
             .then((myJson) => {
                 if (myJson.success)
-                    return myJson.body;
+                    return myJson.payload;
                 else {
                     showToast(myJson.message, toastType.ERROR);
                     return null;
@@ -47,7 +47,7 @@ export const DeleteData = async (url) => {
             .then(res => res.json())
             .then((myJson) => {
                 if (myJson.success)
-                    return myJson.body;
+                    return myJson.payload;
                 else {
                     showToast(myJson.message, toastType.ERROR);
                     return null;

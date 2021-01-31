@@ -17,8 +17,12 @@
 
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
+    <Compile Remove="Helpers\**" />
     <Content Remove="$(SpaRoot)**" />
+    <Content Remove="Helpers\**" />
+    <EmbeddedResource Remove="Helpers\**" />
     <None Remove="$(SpaRoot)**" />
+    <None Remove="Helpers\**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
   </ItemGroup>
 
@@ -28,6 +32,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\KETOWAY.DataAccess\KETOWAY.DataAccess.csproj" />
+    <ProjectReference Include="..\KETOWAY.Utilities\KETOWAY.Utilities.csproj" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

@@ -10,7 +10,7 @@ import Accordion from 'react-bootstrap/Accordion'
 import Card from 'react-bootstrap/Card'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
-import ReactDOM from 'react-dom';
+import { PostData, GetData, DeleteData } from "../Helper";
 
 class UserModal extends Component {
     state = {
@@ -20,17 +20,11 @@ class UserModal extends Component {
     constructor(props) {
         super(props);
 
-        var url = 'api/User/getFoodGroups';
-        fetch(url)
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    this.setState({ foodGroups: result });
-                },
-                (error) => {
-                    console.log(error);
-                }
-            );
+        var url = 'api/MobileApi/getFoodGroups';
+        var result = GetData(url);
+        if (result) {
+            this.setState({ foodGroups: result });
+        }
 
         this.handleSubmit = this.handleSubmit.bind(this);
         this.onFileChange = this.onFileChange.bind(this);
@@ -152,29 +146,17 @@ class UserModal extends Component {
         }
     }
 
-    onAdminChange(e) {
-
-    }
     onFileChange(code) {
-        return e => {
+        return async e => {
             e.preventDefault();
             var obj = e.target.files[0];
             var url = 'api/User/userImage';
-            const requestOptions = {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(obj)
-            };
-            fetch(url, requestOptions)
-                .then(
-                    (result) => {
-                        //this.getUsers();
-                    },
-                    (error) => {
-                        console.log(error);
-                    });
+            var apiRequest = { payload: obj };
+            var result = await PostData(url, apiRequest);
+            if (result) {
+                //this.getUsers();
+            } else
+                console.log(result);
         }
     }
 }

@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using KetoWay.DataAccess.DataEntities;
 using KETOWAY.DataAccess;
-using KETOWAY.Helpers;
 using KetoWayApi.DataAccess.BusinessLayer;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
@@ -23,8 +22,16 @@ namespace KETOWAY.Controllers
         [HttpPost("userLogIn")]
         public ApiResponse UserLogIn([FromBody] ApiRequest model)
         {
-            var user = JsonConvert.DeserializeObject<DeUser>(model.Body.ToString());
+            var user = JsonConvert.DeserializeObject<DeUser>(model.Payload.ToString());
             var result = BlUser.IsValidUser(user.UserCode, user.Password);
+            return result;
+        }
+
+        [HttpPost("recoverPassword")]
+        public ApiResponse RecoverPassword([FromBody] ApiRequest model)
+        {
+            var user = JsonConvert.DeserializeObject<DeUser>(model.Payload.ToString());
+            var result = BlUser.RecoverPassword(user.UserCode, user.Password);
             return result;
         }
         #endregion
@@ -47,7 +54,7 @@ namespace KETOWAY.Controllers
         [HttpPost("postUser")]
         public async Task<ApiResponse> PostUser([FromBody] ApiRequest model)
         {
-            var obj = JsonConvert.DeserializeObject<DeUser>(model.Body.ToString());
+            var obj = JsonConvert.DeserializeObject<DeUser>(model.Payload.ToString());
             var result = BlUser.Save(obj);
 
             return result;
@@ -57,6 +64,16 @@ namespace KETOWAY.Controllers
         public ApiResponse DeleteUser(string userCode)
         {
             var result = BlUser.Delete(userCode);
+            return result;
+        }
+
+        [HttpPost("forgotPassword")]
+        public async Task<ApiResponse> ForgotPassword([FromBody] ApiRequest model)
+        {
+            var email = model.Payload.ToString();
+
+            var result = BlUser.ForgotPassword(email);
+
             return result;
         }
 
@@ -85,6 +102,8 @@ namespace KETOWAY.Controllers
                 return BadRequest("");
             }
         }
+
+
         #endregion
     }
 }

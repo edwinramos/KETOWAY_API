@@ -3,10 +3,14 @@ import Main from './components/Main';
 import LogIn from './components/User/LogIn';
 import './custom.css'
 import { ToastContainer, Slide } from 'react-toastify';
-import { getCookie } from './components/Helper';
+import { getCookie, setCookie } from './components/Helper';
+import RecoverPassword from './components/User/RecoverPassword';
 
 export default class App extends Component {
     static displayName = App.name;
+    state = {
+        isLogOn: false, isRecoverPassword: false, recoveryUserCode: ""
+    };
     constructor(props) {
         super(props);
         var isActiveUser = false;
@@ -14,10 +18,17 @@ export default class App extends Component {
         if (user)
             isActiveUser = true;
 
-        this.state = {
-            isLogOn: isActiveUser, activeUser: []
-        };
-
+        var currentUrl = window.location.href;
+        if (currentUrl.includes('recoverPassword')) {
+            var userCode = currentUrl.split('/')[4];
+            this.state = {
+                isRecoverPassword: true, recoveryUserCode: userCode
+            };
+        } else {
+            this.state = {
+                isLogOn: isActiveUser
+            };
+        }
         this.onLogInSucess = this.onLogInSucess.bind(this);
     }
 
@@ -28,9 +39,10 @@ export default class App extends Component {
                     position="top-center"
                     transition={Slide}
                 />
-                {this.state.isLogOn ?
+                {this.state.isRecoverPassword ?
+                    <RecoverPassword userCode={this.state.recoveryUserCode}/> : (this.state.isLogOn ?
                     <Main /> :
-                    <LogIn onLogInSucess={() => { this.onLogInSucess() }} />
+                    <LogIn onLogInSucess={() => { this.onLogInSucess() }} />)
                 }
             </div>
         );
